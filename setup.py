@@ -36,6 +36,7 @@ def get_install_requires():
         "PyYAML",
         "qtpy",
         "termcolor",
+        "opencv-python",
     ]
 
     # Find python binding for qt with priority:

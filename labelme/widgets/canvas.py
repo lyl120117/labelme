@@ -804,3 +804,23 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = None
         self.shapesBackups = []
         self.update()
+
+    def zoomInShape(self):
+        if len(self.selectedShapes) == 0:
+            return
+        for shape in self.selectedShapes:
+            shape.zoomInShape()
+        self.selectionChanged.emit(self.selectedShapes)
+        self.storeShapes()
+        self.shapeMoved.emit()
+        self.update()
+
+    def zoomOutShape(self):
+        if len(self.selectedShapes) == 0:
+            return
+        for shape in self.selectedShapes:
+            shape.zoomOutShape()
+        self.selectionChanged.emit(self.selectedShapes)
+        self.storeShapes()
+        self.shapeMoved.emit()
+        self.update()

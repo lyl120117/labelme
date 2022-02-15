@@ -1,5 +1,6 @@
 import copy
 import math
+import numpy as np
 
 from qtpy import QtCore
 from qtpy import QtGui
@@ -291,3 +292,53 @@ class Shape(object):
 
     def __setitem__(self, key, value):
         self.points[key] = value
+
+    def zoomInShape(self):
+        self.zoomShape(1)
+    
+    '''
+    Negative zoom in shape
+    Positive zoom out shape
+    '''
+    def zoomPoint(self, point, dx, dy):
+        point[0] -= dx
+        point[1] -= dy
+    
+    def zoomShape(self, offset):
+        points = []
+        for p in self.points:
+            points.append([p.x(), p.y()])
+        points = np.array(points)
+        self.sorted_points(points)
+        self.zoomPoint(points[0], -offset, -offset)
+        self.zoomPoint(points[1], offset, -offset)
+        self.zoomPoint(points[2], offset, offset)
+        self.zoomPoint(points[3], -offset, offset)
+        for i in range(len(self.points)):
+            self.points[i].setX(points[i, 0])
+            self.points[i].setY(points[i, 1])
+
+    def zoomOutShape(self):
+        self.zoomShape(-1)
+
+    def sorted_points(self, dt_boxes):
+        """
+        Sort text boxes in order from left-top clockwise
+        args:
+            dt_boxes(array):detected text boxes with shape [4, 2]
+        return:
+            sorted boxes(array) with shape [4, 2]
+        """
+        sorted_boxes = sorted(dt_boxes, key=lambda x: (x[0], x[1]))
+        bbox = np.array([i.tolist() for i in sorted_boxes])
+        _bbox = []
+        # point 0
+        _bbox.append(bbox[0] if bbox[0][1] < bbox[1][1] else bbox[1])
+        # point 1
+        _bbox.append(bbox[2] if bbox[2][1] < bbox[3][1] else bbox[3])
+        # point 2
+        _bbox.append(bbox[3] if bbox[2][1] < bbox[3][1] else bbox[2])
+        # point 3
+        _bbox.append(bbox[1] if bbox[0][1] < bbox[1][1] else bbox[0])
+
+        return np.array(_bbox)

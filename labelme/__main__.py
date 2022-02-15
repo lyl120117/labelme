@@ -6,6 +6,10 @@ import os.path as osp
 import sys
 import yaml
 
+__dir__ = os.path.dirname(__file__)
+sys.path.append(os.path.join(__dir__, '..'))
+
+
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -143,6 +147,8 @@ def main():
     output = config_from_args.pop("output")
     config_file_or_yaml = config_from_args.pop("config")
     config = get_config(config_file_or_yaml, config_from_args)
+    config['auto_save'] = True
+    config['store_data'] = False
 
     if not config["labels"] and config["validate_label"]:
         logger.error(

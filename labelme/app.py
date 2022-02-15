@@ -13,6 +13,9 @@ from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
 
+import cv2
+import numpy as np
+
 from labelme import __appname__
 from labelme import PY2
 from labelme import QT5
@@ -243,6 +246,30 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcuts["open_prev"],
             "prev",
             self.tr(u"Open prev (hold Ctl+Shift to copy labels)"),
+            enabled=False,
+        )
+        rotateImg = action(
+            self.tr("&Rotate Image"),
+            self.rotateImg,
+            shortcuts["rotate"],
+            "rotate",
+            self.tr(u"Click R to rotate image"),
+            enabled=False,
+        )
+        zoomInShape = action(
+            self.tr("&Zoom In Select Shape"),
+            self.zoomInShape,
+            shortcuts["zoom_in_shape"],
+            "zoomInShape",
+            self.tr(u"Click - to zoom in select shape"),
+            enabled=False,
+        )
+        zoomOutShape = action(
+            self.tr("&Zoom Out Select Shape"),
+            self.zoomOutShape,
+            shortcuts["zoom_out_shape"],
+            "zoomOutShape",
+            self.tr(u"Click + to zoom out select shape"),
             enabled=False,
         )
         save = action(
@@ -589,6 +616,9 @@ class MainWindow(QtWidgets.QMainWindow):
             zoomActions=zoomActions,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
+            rotateImg=rotateImg,
+            zoomInShape=zoomInShape,
+            zoomOutShape=zoomOutShape,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
             # XXX: need to add some actions here to activate the shortcut
@@ -631,6 +661,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 brightnessContrast,
+                zoomInShape,
+                zoomOutShape,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -653,6 +685,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 open_,
                 openNextImg,
                 openPrevImg,
+                rotateImg,
                 opendir,
                 self.menus.recentFiles,
                 save,
@@ -688,6 +721,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWidth,
                 None,
                 brightnessContrast,
+                zoomInShape,
+                zoomOutShape,
             ),
         )
 
@@ -712,13 +747,13 @@ class MainWindow(QtWidgets.QMainWindow):
             openPrevImg,
             save,
             deleteFile,
+            brightnessContrast,
+            undo,
             None,
             createMode,
             editMode,
             copy,
             delete,
-            undo,
-            brightnessContrast,
             None,
             zoom,
             fitWidth,
@@ -1675,6 +1710,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config["keep_prev"] = keep_prev
 
+    def rotateImg(self, _value=False):
+        filename = self.filename
+        pix = cv2.imread(filename)
+        pix = np.rot90(pix, 1)
+        cv2.imwrite(filename, pix)
+        self.canvas.update()
+        self.loadFile(filename)
+    
+    def zoomInShape(self, _value=False):
+        self.canvas.zoomInShape()
+
+    def zoomOutShape(self, _value=False):
+        self.canvas.zoomOutShape()
+
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
@@ -1978,6 +2027,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def importDirImages(self, dirpath, pattern=None, load=True):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
+        self.actions.rotateImg.setEnabled(True)
 
         if not self.mayContinue() or not dirpath:
             return
