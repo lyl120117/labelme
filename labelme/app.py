@@ -530,7 +530,7 @@ class MainWindow(QtWidgets.QMainWindow):
         brightnessContrast = action(
             "&Brightness Contrast",
             self.brightnessContrast,
-            None,
+            shortcuts["brightness"],
             "color",
             "Adjust brightness and contrast",
             enabled=False,

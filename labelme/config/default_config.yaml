@@ -82,6 +82,7 @@ shortcuts:
   rotate: [R, Ctrl+Shift+R]
   zoom_in_shape: [-, Ctrl+Shift+-]
   zoom_out_shape: [+, Ctrl+Shift++]
+  brightness: [B, Ctrl+Shift+B]
 
   zoom_in: [Ctrl++, Ctrl+=]
   zoom_out: Ctrl+-
