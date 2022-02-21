@@ -1682,6 +1682,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.loadFile(filename)
 
         self._config["keep_prev"] = keep_prev
+        self.canvas.unselectShape()
 
     def openNextImg(self, _value=False, load=True):
         keep_prev = self._config["keep_prev"]
@@ -1709,6 +1710,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadFile(self.filename)
 
         self._config["keep_prev"] = keep_prev
+        self.canvas.unselectShape()
 
     def rotateImg(self, _value=False):
         filename = self.filename

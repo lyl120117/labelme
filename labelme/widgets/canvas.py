@@ -824,3 +824,6 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.shapeMoved.emit()
         self.update()
+
+    def unselectShape(self):
+        self.selectedShapes = []
