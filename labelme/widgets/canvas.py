@@ -606,6 +606,8 @@ class Canvas(QtWidgets.QWidget):
         return point / self.scale - self.offsetToCenter()
 
     def offsetToCenter(self):
+        if self.pixmap is None:
+            return QtCore.QPoint(0, 0)
         s = self.scale
         area = super(Canvas, self).size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
