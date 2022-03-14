@@ -358,6 +358,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
+        createPolygonRectMode = action(
+            self.tr("Create Polygon Rectangle"),
+            lambda: self.toggleDrawMode(False, createMode="polygon_rect"),
+            shortcuts["create_polygon_rect"],
+            "objects",
+            self.tr("Start drawing polygon rectangles"),
+            enabled=False,
+        )
         createCircleMode = action(
             self.tr("Create Circle"),
             lambda: self.toggleDrawMode(False, createMode="circle"),
@@ -394,6 +402,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Edit Polygons"),
             self.setEditMode,
             shortcuts["edit_polygon"],
+            "edit",
+            self.tr("Move and edit the selected polygons"),
+            enabled=False,
+        )
+        editPolygonRectMode = action(
+            self.tr("Edit Polygons Rect"),
+            self.setEditPolygonRectMode,
+            shortcuts["edit_polygon_rect"],
             "edit",
             self.tr("Move and edit the selected polygons"),
             enabled=False,
@@ -601,7 +617,9 @@ class MainWindow(QtWidgets.QMainWindow):
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
+            editPolygonRectMode=editPolygonRectMode,
             createRectangleMode=createRectangleMode,
+            createPolygonRectMode=createPolygonRectMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
@@ -638,11 +656,13 @@ class MainWindow(QtWidgets.QMainWindow):
             menu=(
                 createMode,
                 createRectangleMode,
+                createPolygonRectMode,
                 createCircleMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                editPolygonRectMode,
                 edit,
                 copy,
                 delete,
@@ -655,11 +675,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 close,
                 createMode,
                 createRectangleMode,
+                createPolygonRectMode,
                 createCircleMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                editPolygonRectMode,
                 brightnessContrast,
                 zoomInShape,
                 zoomOutShape,
@@ -752,6 +774,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             createMode,
             editMode,
+            editPolygonRectMode,
             copy,
             delete,
             None,
@@ -857,11 +880,13 @@ class MainWindow(QtWidgets.QMainWindow):
         actions = (
             self.actions.createMode,
             self.actions.createRectangleMode,
+            self.actions.createPolygonRectMode,
             self.actions.createCircleMode,
             self.actions.createLineMode,
             self.actions.createPointMode,
             self.actions.createLineStripMode,
             self.actions.editMode,
+            self.actions.editPolygonRectMode,
         )
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
 
@@ -888,6 +913,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
+        self.actions.createPolygonRectMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
         self.actions.createPointMode.setEnabled(True)
@@ -960,6 +986,7 @@ class MainWindow(QtWidgets.QMainWindow):
         In the middle of drawing, toggling between modes should be disabled.
         """
         self.actions.editMode.setEnabled(not drawing)
+        self.actions.editPolygonRectMode.setEnabled(not drawing)
         self.actions.undoLastPoint.setEnabled(drawing)
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
@@ -970,6 +997,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if edit:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
+            self.actions.createPolygonRectMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
@@ -978,6 +1006,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -985,6 +1014,15 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "rectangle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
+                self.actions.createPolygonRectMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == "polygon_rect":
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -992,6 +1030,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "line":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
                 self.actions.createPointMode.setEnabled(True)
@@ -999,6 +1038,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "point":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(False)
@@ -1006,6 +1046,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -1013,6 +1054,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createPolygonRectMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
@@ -1020,9 +1062,13 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 raise ValueError("Unsupported createMode: %s" % createMode)
         self.actions.editMode.setEnabled(not edit)
+        self.actions.editPolygonRectMode.setEnabled(not edit)
 
     def setEditMode(self):
         self.toggleDrawMode(True)
+
+    def setEditPolygonRectMode(self):
+        self.toggleDrawMode(True, createMode='polygon_rect')
 
     def updateFileMenu(self):
         current = self.filename
@@ -1355,6 +1401,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.group_id = group_id
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
+            self.actions.editPolygonRectMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()

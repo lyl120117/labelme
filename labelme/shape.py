@@ -1,11 +1,13 @@
 import copy
 import math
+import re
 import numpy as np
 
 from qtpy import QtCore
 from qtpy import QtGui
 
 import labelme.utils
+from labelme.utils import CalcFourthPoint
 
 
 # TODO(unknown):
@@ -89,6 +91,7 @@ class Shape(object):
             value = "polygon"
         if value not in [
             "polygon",
+            'polygon_rect',
             "rectangle",
             "point",
             "line",
@@ -265,6 +268,15 @@ class Shape(object):
 
     def moveVertexBy(self, i, offset):
         self.points[i] = self.points[i] + offset
+        if self.shape_type == 'polygon_rect':
+            pre_i = i - 1 if i - 1 > -1 else len(self.points) - 1
+            next_i = (i + 1) % 4
+            if pre_i > next_i:
+                self.points[pre_i].setX(self.points[pre_i].x() + offset.x())
+                self.points[next_i].setY(self.points[next_i].y() + offset.y())
+            else:
+                self.points[pre_i].setY(self.points[pre_i].y() + offset.y())
+                self.points[next_i].setX(self.points[next_i].x() + offset.x())
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action
@@ -342,3 +354,19 @@ class Shape(object):
         _bbox.append(bbox[1] if bbox[0][1] < bbox[1][1] else bbox[0])
 
         return np.array(_bbox)
+
+    def onMousePress(self):
+        points = []
+        if len(self.points) == 3:
+            for p in self.points:
+                points.append([p.x(), p.y()])
+            point = CalcFourthPoint(points[2], points[0], points[1])
+            
+            self.addPoint(QtCore.QPointF(point[0], point[1]))
+            self.close()
+            return True
+        return False
+        
+    def onMouseMove(self):
+        print("onMouseMove:", len(self.points))
+        return False

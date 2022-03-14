@@ -16,6 +16,9 @@ from .shape import polygons_to_mask
 from .shape import shape_to_mask
 from .shape import shapes_to_label
 
+from .point import JudgeBeveling
+from .point import CalcFourthPoint
+
 from .qt import newIcon
 from .qt import newButton
 from .qt import newAction

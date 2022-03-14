@@ -100,6 +100,7 @@ class Canvas(QtWidgets.QWidget):
     def createMode(self, value):
         if value not in [
             "polygon",
+            "polygon_rect",
             "rectangle",
             "circle",
             "line",
@@ -215,7 +216,7 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
+            if self.createMode in ["polygon", "linestrip", "polygon_rect"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == "rectangle":
@@ -340,6 +341,11 @@ class Canvas(QtWidgets.QWidget):
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
+                            self.finalise()
+                    elif self.createMode == "polygon_rect":
+                        self.current.addPoint(self.line[1])
+                        self.line[0] = self.current[-1]
+                        if self.current.onMousePress():
                             self.finalise()
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
@@ -752,7 +758,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode in ["polygon", "linestrip"]:
+        if self.createMode in ["polygon", "linestrip", 'polygon_rect']:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]

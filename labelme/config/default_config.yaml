@@ -92,6 +92,8 @@ shortcuts:
 
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
+  create_polygon_rect: Ctrl+T
+  edit_polygon_rect: Shift+T
   create_circle: null
   create_line: null
   create_point: null
