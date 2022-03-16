@@ -370,3 +370,22 @@ class Shape(object):
     def onMouseMove(self):
         print("onMouseMove:", len(self.points))
         return False
+
+    def convertToRect(self):
+        points = []
+        for p in self.points:
+            points.append([p.x(), p.y()])
+        points = np.array(points)
+        minx = np.min(points[:, 0])
+        maxx = np.max(points[:, 0])
+        miny = np.min(points[:, 1])
+        maxy = np.max(points[:, 1])
+        points = []
+        points.append([minx, miny])
+        points.append([minx, maxy])
+        points.append([maxx, maxy])
+        points.append([maxx, miny])
+        points = np.array(points)
+        for i in range(len(self.points)):
+            self.points[i].setX(points[i, 0])
+            self.points[i].setY(points[i, 1])

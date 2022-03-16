@@ -835,3 +835,10 @@ class Canvas(QtWidgets.QWidget):
 
     def unselectShape(self):
         self.selectedShapes = []
+
+    def convertToRect(self):
+        for shape in self.shapes:
+            shape.convertToRect()
+        self.storeShapes()
+        self.shapeMoved.emit()
+        self.update()

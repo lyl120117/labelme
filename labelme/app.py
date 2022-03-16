@@ -551,6 +551,14 @@ class MainWindow(QtWidgets.QMainWindow):
             "Adjust brightness and contrast",
             enabled=False,
         )
+        convertToRect = action(
+            "&Convert To Rect",
+            self.convertToRect,
+            shortcuts["convert_to_rect"],
+            "convert_to_rect",
+            "Convert To Rect",
+            enabled=False,
+        )
         # Group zoom controls into a list for easier toggling.
         zoomActions = (
             self.zoomWidget,
@@ -631,6 +639,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
+            convertToRect=convertToRect,
             zoomActions=zoomActions,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
@@ -683,6 +692,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 editPolygonRectMode,
                 brightnessContrast,
+                convertToRect,
                 zoomInShape,
                 zoomOutShape,
             ),
@@ -743,6 +753,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWidth,
                 None,
                 brightnessContrast,
+                convertToRect,
                 zoomInShape,
                 zoomOutShape,
             ),
@@ -770,6 +781,7 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             brightnessContrast,
+            convertToRect,
             undo,
             None,
             createMode,
@@ -1473,6 +1485,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(
             QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
+    def convertToRect(self, value):
+        self.canvas.convertToRect()
 
     def brightnessContrast(self, value):
         dialog = BrightnessContrastDialog(
