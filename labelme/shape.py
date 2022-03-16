@@ -382,10 +382,11 @@ class Shape(object):
         maxy = np.max(points[:, 1])
         points = []
         points.append([minx, miny])
-        points.append([minx, maxy])
-        points.append([maxx, maxy])
         points.append([maxx, miny])
+        points.append([maxx, maxy])
+        points.append([minx, maxy])
         points = np.array(points)
+        points = self.sorted_points(points)
         for i in range(len(self.points)):
             self.points[i].setX(points[i, 0])
             self.points[i].setY(points[i, 1])
