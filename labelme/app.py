@@ -781,7 +781,6 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             brightnessContrast,
-            convertToRect,
             undo,
             None,
             createMode,
